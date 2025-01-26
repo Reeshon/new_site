@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
+import { Link, graphql } from "gatsby"
+import { StaticImage, GatsbyImage, getImage } from "gatsby-plugin-image"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -69,54 +69,101 @@ const moreLinks = [
 
 const utmParameters = `?utm_source=starter&utm_medium=start-page&utm_campaign=default-starter`
 
-const IndexPage = () => (
-  <Layout>
-    <div className={styles.textCenter}>
-      <StaticImage
-        src="../images/example.png"
-        loading="eager"
-        width={64}
-        quality={95}
-        formats={["auto", "webp", "avif"]}
-        alt=""
-        style={{ marginBottom: `var(--space-3)` }}
-      />
-      <h1>
-        Welcome to <b>Gatsby!</b>
-      </h1>
-      <p className={styles.intro}>
-        <b>Example pages:</b>{" "}
-        {samplePageLinks.map((link, i) => (
-          <React.Fragment key={link.url}>
-            <Link to={link.url}>{link.text}</Link>
-            {i !== samplePageLinks.length - 1 && <> · </>}
-          </React.Fragment>
+const IndexPage = ({ data }) => {
+  const products = data.allProductsJson.edges;
+
+  return (
+    <Layout>
+      <div className={styles.textCenter}>
+        <StaticImage
+          src="../images/example.png"
+          loading="eager"
+          width={64}
+          quality={95}
+          formats={["auto", "webp", "avif"]}
+          alt=""
+          style={{ marginBottom: `var(--space-3)` }}
+        />
+        <h1>
+          Welcome to <b>Gatsby!</b>
+        </h1>
+        <p className={styles.intro}>
+          <b>Example pages:</b>{" "}
+          {samplePageLinks.map((link, i) => (
+            <React.Fragment key={link.url}>
+              <Link to={link.url}>{link.text}</Link>
+              {i !== samplePageLinks.length - 1 && <> · </> }
+            </React.Fragment>
+          ))}
+          <br />
+          Edit <code>src/pages/index.js</code> to update this page.
+        </p>
+      </div>
+      <ul className={styles.list}>
+        {links.map(link => (
+          <li key={link.url} className={styles.listItem}>
+            <a
+              className={styles.listItemLink}
+              href={`${link.url}${utmParameters}`}
+            >
+              {link.text} ↗
+            </a>
+            <p className={styles.listItemDescription}>{link.description}</p>
+          </li>
         ))}
-        <br />
-        Edit <code>src/pages/index.js</code> to update this page.
-      </p>
-    </div>
-    <ul className={styles.list}>
-      {links.map(link => (
-        <li key={link.url} className={styles.listItem}>
-          <a
-            className={styles.listItemLink}
-            href={`${link.url}${utmParameters}`}
-          >
-            {link.text} ↗
-          </a>
-          <p className={styles.listItemDescription}>{link.description}</p>
-        </li>
+      </ul>
+      {moreLinks.map((link, i) => (
+        <React.Fragment key={link.url}>
+          <a href={`${link.url}${utmParameters}`}>{link.text}</a>
+          {i !== moreLinks.length - 1 && <> · </> }
+        </React.Fragment>
       ))}
-    </ul>
-    {moreLinks.map((link, i) => (
-      <React.Fragment key={link.url}>
-        <a href={`${link.url}${utmParameters}`}>{link.text}</a>
-        {i !== moreLinks.length - 1 && <> · </>}
-      </React.Fragment>
-    ))}
-  </Layout>
-)
+      <div>
+        <h1>Our Products</h1>
+        <ul>
+          {products.map(({ node }) => (
+            <li key={node.id}>
+              <Link to={`/products/${node.id}`}>
+                <h2>{node.name}</h2>
+                {
+                  node.image?.childImageSharp ? (
+                    <GatsbyImage
+                      image={getImage(node.image.childImageSharp)}
+                      alt={node.name}
+                    />
+                  ) : (
+                    <p>No image available</p>
+                  )
+                }
+                <p>Price: ${node.price}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Layout>
+  );
+};
+
+export const query = graphql`
+  query {
+    allProductsJson {
+      edges {
+        node {
+          id
+          name
+          price
+          image {
+            childImageSharp {
+              gatsbyImageData(width: 400)
+            }
+          }
+          description
+        }
+      }
+    }
+  }
+`;
 
 /**
  * Head export to define metadata for the page

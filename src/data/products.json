@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "name": "Chocolate Cake",
+    "price": 20.0,
+    "image": "/images/chocolate-cake.jpg",
+    "description": "Delicious chocolate cake."
+  },
+  {
+    "id": "2",
+    "name": "Vanilla Cupcake",
+    "price": 5.0,
+    "image": "/images/vanilla-cupcake.jpg",
+    "description": "Tasty vanilla cupcakes."
+  }
+]

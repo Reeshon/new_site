@@ -222,3 +222,11 @@ pre tt:before,
 pre tt:after {
   content: none;
 }
+
+.btn {
+  margin-top: 10px;
+}
+
+.table input {
+  width: 60px;
+}

@@ -67,3 +67,5 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+
+# Ensure no hardcoded paths are present
