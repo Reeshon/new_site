@@ -9,28 +9,28 @@ const path = require("path");
 /**
  * @type {import('gatsby').GatsbyNode['createPages']}
  */
-exports.createPages = async ({ actions, graphql }) => {
+exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions;
   const result = await graphql(`
-    {
+    query {
       allProductsJson {
         edges {
           node {
             id
-            # Remove or adjust the image field:
-            # image {
-            #   publicURL
-            # }
           }
         }
       }
     }
   `);
 
+  if (result.errors) {
+    throw result.errors;
+  }
+
   result.data.allProductsJson.edges.forEach(({ node }) => {
     createPage({
-      path: `/product/${node.id}`,
-      component: require.resolve(`./src/templates/product.js`),
+      path: `/products/${node.id}`,
+      component: path.resolve(`./src/templates/product-template.js`),
       context: { id: node.id },
     });
   });

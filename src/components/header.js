@@ -1,9 +1,11 @@
 import * as React from "react"
 import { Link } from "gatsby"
 import { useCart } from "../context/CartContext"
+import { useWishlist } from "../context/WishlistContext"
 
 const Header = ({ siteTitle }) => {
   const { cartItems } = useCart()
+  const { wishlistItems } = useWishlist()
 
   return (
     <header
@@ -28,6 +30,9 @@ const Header = ({ siteTitle }) => {
         <ul>
           <li>
             <Link to="/cart/">Cart ({cartItems.length})</Link>
+          </li>
+          <li>
+            <Link to="/wishlist/">Wishlist ({wishlistItems.length})</Link>
           </li>
         </ul>
       </nav>

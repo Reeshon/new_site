@@ -1,145 +1,61 @@
-import * as React from "react"
-import { Link, graphql } from "gatsby"
-import { StaticImage, GatsbyImage, getImage } from "gatsby-plugin-image"
-
-import Layout from "../components/layout"
-import Seo from "../components/seo"
-import * as styles from "../components/index.module.css"
-
-const links = [
-  {
-    text: "Tutorial",
-    url: "https://www.gatsbyjs.com/docs/tutorial",
-    description:
-      "A great place to get started if you're new to web development. Designed to guide you through setting up your first Gatsby site.",
-  },
-  {
-    text: "Examples",
-    url: "https://github.com/gatsbyjs/gatsby/tree/master/examples",
-    description:
-      "A collection of websites ranging from very basic to complex/complete that illustrate how to accomplish specific tasks within your Gatsby sites.",
-  },
-  {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Learn how to add functionality and customize your Gatsby site or app with thousands of plugins built by our amazing developer community.",
-  },
-  {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
-  },
-]
-
-const samplePageLinks = [
-  {
-    text: "Page 2",
-    url: "page-2",
-    badge: false,
-    description:
-      "A simple example of linking to another page within a Gatsby site",
-  },
-  { text: "TypeScript", url: "using-typescript" },
-  { text: "Server Side Rendering", url: "using-ssr" },
-  { text: "Deferred Static Generation", url: "using-dsg" },
-]
-
-const moreLinks = [
-  { text: "Join us on Discord", url: "https://gatsby.dev/discord" },
-  {
-    text: "Documentation",
-    url: "https://gatsbyjs.com/docs/",
-  },
-  {
-    text: "Starters",
-    url: "https://gatsbyjs.com/starters/",
-  },
-  {
-    text: "Showcase",
-    url: "https://gatsbyjs.com/showcase/",
-  },
-  {
-    text: "Contributing",
-    url: "https://www.gatsbyjs.com/contributing/",
-  },
-  { text: "Issues", url: "https://github.com/gatsbyjs/gatsby/issues" },
-]
-
-const utmParameters = `?utm_source=starter&utm_medium=start-page&utm_campaign=default-starter`
+import 'bootstrap/dist/css/bootstrap.min.css';
+import * as React from "react";
+import { Link, graphql } from "gatsby";
+import { GatsbyImage, getImage } from "gatsby-plugin-image";
+import Layout from "../components/layout";
+import Seo from "../components/seo";
 
 const IndexPage = ({ data }) => {
+  const [searchTerm, setSearchTerm] = React.useState("");
   const products = data.allProductsJson.edges;
+
+  const filteredProducts = products.filter(({ node }) =>
+    node.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Layout>
-      <div className={styles.textCenter}>
-        <StaticImage
-          src="../images/example.png"
-          loading="eager"
-          width={64}
-          quality={95}
-          formats={["auto", "webp", "avif"]}
-          alt=""
-          style={{ marginBottom: `var(--space-3)` }}
-        />
-        <h1>
-          Welcome to <b>Gatsby!</b>
-        </h1>
-        <p className={styles.intro}>
-          <b>Example pages:</b>{" "}
-          {samplePageLinks.map((link, i) => (
-            <React.Fragment key={link.url}>
-              <Link to={link.url}>{link.text}</Link>
-              {i !== samplePageLinks.length - 1 && <> · </> }
-            </React.Fragment>
-          ))}
-          <br />
-          Edit <code>src/pages/index.js</code> to update this page.
-        </p>
+      <Seo title="Home" />
+      <div className="jumbotron text-center">
+        <h1 className="display-4">Welcome to Deleens Home Bake</h1>
+        <p className="lead">Delicious homemade baked goods made with love.</p>
+        <hr className="my-4" />
+        <p>Explore our range of products and find your favorite treat!</p>
+        <a className="btn btn-primary btn-lg" href="#products" role="button">Shop Now</a>
       </div>
-      <ul className={styles.list}>
-        {links.map(link => (
-          <li key={link.url} className={styles.listItem}>
-            <a
-              className={styles.listItemLink}
-              href={`${link.url}${utmParameters}`}
-            >
-              {link.text} ↗
-            </a>
-            <p className={styles.listItemDescription}>{link.description}</p>
-          </li>
-        ))}
-      </ul>
-      {moreLinks.map((link, i) => (
-        <React.Fragment key={link.url}>
-          <a href={`${link.url}${utmParameters}`}>{link.text}</a>
-          {i !== moreLinks.length - 1 && <> · </> }
-        </React.Fragment>
-      ))}
-      <div>
-        <h1>Our Products</h1>
-        <ul>
-          {products.map(({ node }) => (
-            <li key={node.id}>
-              <Link to={`/products/${node.id}`}>
-                <h2>{node.name}</h2>
-                {
-                  node.image?.childImageSharp ? (
-                    <GatsbyImage
-                      image={getImage(node.image.childImageSharp)}
-                      alt={node.name}
-                    />
-                  ) : (
-                    <p>No image available</p>
-                  )
-                }
-                <p>Price: ${node.price}</p>
-              </Link>
-            </li>
+      <div id="products" className="container py-5">
+        <h2 className="h3 mb-4">Our Products</h2>
+        <div className="mb-4">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search for products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="row">
+          {filteredProducts.map(({ node }) => (
+            <div key={node.id} className="col-md-4 mb-4">
+              <div className="card h-100">
+                {node.image?.childImageSharp ? (
+                  <GatsbyImage
+                    className="card-img-top"
+                    image={getImage(node.image.childImageSharp)}
+                    alt={node.name}
+                  />
+                ) : (
+                  <p>No image available</p>
+                )}
+                <div className="card-body">
+                  <h5 className="card-title">{node.name}</h5>
+                  <p className="card-text">${node.price}</p>
+                  <Link to={`/products/${node.id}`} className="btn btn-primary">View Details</Link>
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </Layout>
   );
@@ -165,11 +81,6 @@ export const query = graphql`
   }
 `;
 
-/**
- * Head export to define metadata for the page
- *
- * See: https://www.gatsbyjs.com/docs/reference/built-in-components/gatsby-head/
- */
 export const Head = () => <Seo title="Home" />
 
-export default IndexPage
+export default IndexPage;

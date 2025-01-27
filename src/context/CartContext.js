@@ -1,61 +1,44 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useReducer } from 'react';
 
-const CartContext = createContext({
-  cartItems: [],
-  updateQuantity: () => {},
-  removeFromCart: () => {},
-  addToCart: () => {},
-})
+const CartContext = createContext();
+
+const cartReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_TO_CART':
+      return [...state, action.payload];
+    case 'REMOVE_FROM_CART':
+      return state.filter(item => item.id !== action.payload.id);
+    case 'UPDATE_QUANTITY':
+      return state.map(item =>
+        item.id === action.payload.id
+          ? { ...item, quantity: action.payload.quantity }
+          : item
+      );
+    default:
+      return state;
+  }
+};
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([])
+  const [cartItems, dispatch] = useReducer(cartReducer, []);
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart")
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart))
-    }
-  }, [])
+  const addToCart = item => {
+    dispatch({ type: 'ADD_TO_CART', payload: item });
+  };
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems))
-  }, [cartItems])
-
-  const addToCart = (product) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id)
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
-      return [...prevItems, { ...product, quantity: 1 }]
-    })
-  }
-
-  const removeFromCart = (id) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id))
-  }
+  const removeFromCart = item => {
+    dispatch({ type: 'REMOVE_FROM_CART', payload: item });
+  };
 
   const updateQuantity = (id, quantity) => {
-    if (quantity < 1) {
-      removeFromCart(id)
-    } else {
-      setCartItems(
-        cartItems.map(item =>
-          item.id === id ? { ...item, quantity } : item
-        )
-      )
-    }
-  }
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+  };
 
   return (
     <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity }}>
       {children}
     </CartContext.Provider>
-  )
-}
+  );
+};
 
-export const useCart = () => useContext(CartContext)
+export const useCart = () => useContext(CartContext);

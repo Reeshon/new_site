@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from "react";
 import { useCart } from "../context/CartContext";
 import Layout from "../components/layout";
@@ -47,8 +48,10 @@ const CheckoutPage = () => {
                     <td>{item.name}</td>
                     <td>${item.price.toFixed(2)}</td>
                     <td>
+                      <label htmlFor={`quantity-${item.id}`} className="sr-only">Quantity</label> {/* Added label */}
                       <input
                         type="number"
+                        id={`quantity-${item.id}`}
                         value={item.quantity}
                         min="1"
                         onChange={e => updateQuantity?.(item.id, parseInt(e.target.value))}
