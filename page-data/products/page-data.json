@@ -1,1 +1,1 @@
-{"componentChunkName":"component---src-pages-products-js","path":"/products/","result":{"pageContext":{}},"staticQueryHashes":["63159454"],"slicesMap":{}}
+{"componentChunkName":"component---src-pages-products-js","path":"/products/","result":{"data":{"allProductsJson":{"edges":[{"node":{"id":"1e1e06b3-ac45-5fb0-93f0-734ded8db446","name":"Sample Product","price":19.99,"image":null}}]}},"pageContext":{}},"staticQueryHashes":["63159454"],"slicesMap":{}}
